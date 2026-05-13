@@ -1,36 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'config/supabase_config.dart';
+import 'core/services/supabase_service.dart';
+import 'screens/auth_screen.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Carregar .env apenas em mobile/desktop
+  if (!kIsWeb) {
+    try {
+      await dotenv.load(fileName: '.env');
+    } catch (e) {
+      debugPrint('Aviso: Não foi possível carregar .env: $e');
+    }
+  }
+
+  // Inicializar Supabase com credenciais
+  // Web: --dart-define=SUPABASE_URL=... --dart-define=SUPABASE_ANON_KEY=...
+  // Mobile/Desktop: .env
+  await Supabase.initialize(
+    url: SupabaseConfig.supabaseUrl,
+    anonKey: SupabaseConfig.supabaseAnonKey,
+  );
+
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Tierlab',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+        scaffoldBackgroundColor: const Color(0xFF121212),
+
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF2E2E2E),
+          foregroundColor: Colors.white,
+        ),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Tierlab'),
     );
   }
 }
@@ -54,68 +69,223 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+  final List<Map<String, String>> games = [
+
+    {
+      'name': 'Sonic Mania',
+      'description': 'Aventura clássica em alta velocidade.',
+      'image':
+        'https://cdn1.epicgames.com/45e7cf3c49054f2fb20b673d9b0ae69e/offer/EGS_SonicMania_Lab42_S5-1360x765-31b5379f91e2451e57e0273339bf68b8.jpg',
+    },
+
+    {
+      'name': 'Resident Evil 4',
+      'description': 'Survival horror com ação intensa.',
+      'image':
+        'https://store-images.s-microsoft.com/image/apps.17229.14157056169306105.30ae0432-c36b-42e7-9bbb-f85189243ca3.c5486ade-9a07-47ba-a2c5-4e717b3f183a?q=90&w=336&h=200',
+    },
+
+    {
+      'name': 'Hades',
+      'description': 'Roguelike frenético inspirado na mitologia.',
+      'image':
+        'https://lojaibyte.vteximg.com.br/arquivos/ids/405817/jogo-hades-ps4.jpg',
+    },
+
+  ];
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+
     return Scaffold(
+
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: .center,
-          children: [
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+        actions: [
+          IconButton(
+            icon: Icon(
+              SupabaseService().isAuthenticated ? Icons.logout : Icons.login,
             ),
+            onPressed: () async {
+              if (SupabaseService().isAuthenticated) {
+                await SupabaseService().signOut();
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Usuário desconectado.')),
+                  );
+                  setState(() {});
+                }
+                return;
+              }
+
+              await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const AuthScreen(),
+                ),
+              );
+              if (context.mounted) {
+                setState(() {});
+              }
+            },
+          ),
+        ],
+      ),
+
+      body: Padding(
+        padding: const EdgeInsets.only(top: 30),
+
+        child: Column(
+          children: [
+
+            CarouselSlider(
+
+              options: CarouselOptions(
+                height: 240,
+                enlargeCenterPage: true,
+                autoPlay: true,
+                viewportFraction: 0.8,
+              ),
+
+              items: games.map<Widget>((Map<String, String> game) {
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+
+                  children: [
+
+                    Expanded(
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 5),
+
+                        child: AspectRatio(
+                          aspectRatio: 18 / 9,
+
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+
+                            child: Stack(
+                              children: [
+
+                                Image.network(
+                                  game['image']!,
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                ),
+
+                                Container(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+
+                                      colors: [
+                                        Colors.transparent,
+                                          const Color.fromRGBO(0, 0, 0, 0.7),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 10),
+
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+
+                      child: Text(
+                        game['name']!,
+
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+
+                      child: Text(
+                        game['description']!,
+
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+
+                        style: TextStyle(
+                          color: Colors.grey[400],
+                          fontSize: 11,
+                        ),
+                      ),
+                    ),
+
+                  ],
+                );
+
+              }).toList(),
+            ),
+
+            const SizedBox(height: 20),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+
+              child: Align(
+                alignment: Alignment.centerLeft,
+
+                child: Text(
+                  'Ação',
+
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+
+            if (!SupabaseService().isAuthenticated) ...[
+              const SizedBox(height: 20),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      final loggedIn = await Navigator.of(context).push<bool?>(
+                        MaterialPageRoute(
+                          builder: (_) => const AuthScreen(),
+                        ),
+                      );
+                      if (context.mounted) {
+                        if (loggedIn == true) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Autenticação concluída.'),
+                            ),
+                          );
+                        }
+                        setState(() {});
+                      }
+                    },
+                    child: const Text('Fazer login / registrar'),
+                  ),
+                ),
+              ),
+            ],
+
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
       ),
     );
   }
