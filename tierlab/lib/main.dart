@@ -1,14 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'config/supabase_config.dart';
+import 'core/services/supabase_service.dart';
+import 'screens/auth_screen.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Carregar .env apenas em mobile/desktop
+  if (!kIsWeb) {
+    try {
+      await dotenv.load(fileName: '.env');
+    } catch (e) {
+      debugPrint('Aviso: Não foi possível carregar .env: $e');
+    }
+  }
+
+  // Inicializar Supabase com credenciais
+  // Web: --dart-define=SUPABASE_URL=... --dart-define=SUPABASE_ANON_KEY=...
+  // Mobile/Desktop: .env
+  await Supabase.initialize(
+    url: SupabaseConfig.supabaseUrl,
+    anonKey: SupabaseConfig.supabaseAnonKey,
+  );
+
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -78,6 +102,34 @@ class _MyHomePageState extends State<MyHomePage> {
 
       appBar: AppBar(
         title: Text(widget.title),
+        actions: [
+          IconButton(
+            icon: Icon(
+              SupabaseService().isAuthenticated ? Icons.logout : Icons.login,
+            ),
+            onPressed: () async {
+              if (SupabaseService().isAuthenticated) {
+                await SupabaseService().signOut();
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Usuário desconectado.')),
+                  );
+                  setState(() {});
+                }
+                return;
+              }
+
+              await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const AuthScreen(),
+                ),
+              );
+              if (context.mounted) {
+                setState(() {});
+              }
+            },
+          ),
+        ],
       ),
 
       body: Padding(
@@ -130,7 +182,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
                                       colors: [
                                         Colors.transparent,
-                                        Colors.black.withOpacity(0.7),
+                                          const Color.fromRGBO(0, 0, 0, 0.7),
                                       ],
                                     ),
                                   ),
@@ -200,6 +252,37 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             ),
+
+            if (!SupabaseService().isAuthenticated) ...[
+              const SizedBox(height: 20),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      final loggedIn = await Navigator.of(context).push<bool?>(
+                        MaterialPageRoute(
+                          builder: (_) => const AuthScreen(),
+                        ),
+                      );
+                      if (context.mounted) {
+                        if (loggedIn == true) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Autenticação concluída.'),
+                            ),
+                          );
+                        }
+                        setState(() {});
+                      }
+                    },
+                    child: const Text('Fazer login / registrar'),
+                  ),
+                ),
+              ),
+            ],
 
           ],
         ),
