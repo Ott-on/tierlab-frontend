@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'config/supabase_config.dart';
 import 'core/services/supabase_service.dart';
@@ -10,18 +9,6 @@ import 'screens/auth_screen.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Carregar .env apenas em mobile/desktop
-  if (!kIsWeb) {
-    try {
-      await dotenv.load(fileName: '.env');
-    } catch (e) {
-      debugPrint('Aviso: Não foi possível carregar .env: $e');
-    }
-  }
-
-  // Inicializar Supabase com credenciais
-  // Web: --dart-define=SUPABASE_URL=... --dart-define=SUPABASE_ANON_KEY=...
-  // Mobile/Desktop: .env
   await Supabase.initialize(
     url: SupabaseConfig.supabaseUrl,
     anonKey: SupabaseConfig.supabaseAnonKey,
