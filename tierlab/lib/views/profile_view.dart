@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tierlab/core/services/supabase_service.dart';
 import 'package:tierlab/screens/auth_screen.dart';
+import 'package:tierlab/views/formulario_tierlist_view.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -56,6 +57,17 @@ class _ProfileViewState extends State<ProfileView> {
             ],
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const FormularioTierlistView(),
+            ),
+          );
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }

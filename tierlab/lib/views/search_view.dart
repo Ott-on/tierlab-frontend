@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tierlab/views/formulario_tierlist_view.dart';
 
 class SearchView extends StatefulWidget {
   const SearchView({super.key});
@@ -35,6 +36,17 @@ class _SearchViewState extends State<SearchView> {
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const FormularioTierlistView(),
+            ),
+          );
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }

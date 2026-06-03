@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tierlab/views/formulario_tierlist_view.dart';
 
 class TierlistsView extends StatelessWidget {
   const TierlistsView({super.key});
@@ -53,6 +54,17 @@ class TierlistsView extends StatelessWidget {
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const FormularioTierlistView(),
+            ),
+          );
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }

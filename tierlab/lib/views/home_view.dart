@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:tierlab/views/formulario_tierlist_view.dart';
 
 import '../../controllers/home_controller.dart';
 
@@ -154,6 +155,17 @@ class _HomeViewState extends State<HomeView> {
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const FormularioTierlistView(),
+            ),
+          );
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }
