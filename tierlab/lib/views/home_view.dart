@@ -20,7 +20,20 @@ class _HomeViewState extends State<HomeView> {
       body: Padding(
         padding: const EdgeInsets.only(top: 30),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                'Jogos Populares',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
             CarouselSlider(
               options: CarouselOptions(
                 height: 240,
@@ -91,16 +104,50 @@ class _HomeViewState extends State<HomeView> {
               }).toList(),
             ),
             const SizedBox(height: 20),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Ação',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Ação',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      // No action for now
+                    },
+                    child: Row(
+                      children: [
+                        Text(
+                          'Ver Mais',
+                          style: TextStyle(color: Colors.amber[800]),
+                        ),
+                        const SizedBox(width: 4),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          size: 16,
+                          color: Colors.amber[800],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: SizedBox(
+                height: 150, // Placeholder height for cards
+                child: Center(
+                  child: Text(
+                    'Playlist relacionadas aqui',
+                    style: TextStyle(color: Colors.grey[500]),
                   ),
                 ),
               ),

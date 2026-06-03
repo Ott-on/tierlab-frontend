@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:tierlab/views/favorites/favorites_view.dart';
-import 'package:tierlab/views/home/home_view.dart';
-import 'package:tierlab/views/profile/profile_view.dart';
-import 'package:tierlab/views/search/search_view.dart';
+import 'package:tierlab/views/home_view.dart';
+import 'package:tierlab/views/profile_view.dart';
+import 'package:tierlab/views/search_view.dart';
+import 'package:tierlab/views/tierlist_view.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -17,7 +17,7 @@ class _MainScreenState extends State<MainScreen> {
   static const List<Widget> _widgetOptions = <Widget>[
     HomeView(),
     SearchView(),
-    FavoritesView(),
+    TierlistsView(),
     ProfileView(),
   ];
 
@@ -36,8 +36,8 @@ class _MainScreenState extends State<MainScreen> {
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
           BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Favorites',
+            icon: Icon(Icons.playlist_play),
+            label: 'Tierlists',
           ),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
