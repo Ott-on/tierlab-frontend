@@ -1,28 +1,7 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-
 class SupabaseConfig {
-  static String get supabaseUrl {
-    // Web: ler de --dart-define (compilação)
-    if (kIsWeb) {
-      const url = String.fromEnvironment('SUPABASE_URL', defaultValue: '');
-      return url;
-    }
-    
-    // Mobile/Desktop: ler de .env
-    final value = dotenv.env['SUPABASE_URL']?.trim() ?? '';
-    return value;
-  }
+  static const String supabaseUrl =
+      'https://wegugfilyydyrmavzhqx.supabase.co';
 
-  static String get supabaseAnonKey {
-    // Web: ler de --dart-define (compilação)
-    if (kIsWeb) {
-      const key = String.fromEnvironment('SUPABASE_ANON_KEY', defaultValue: '');
-      return key;
-    }
-    
-    // Mobile/Desktop: ler de .env
-    final value = dotenv.env['SUPABASE_ANON_KEY']?.trim() ?? '';
-    return value;
-  }
+  static const String supabaseAnonKey =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlZ3VnZmlseXlkeXJtYXZ6aHF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NzU3NTEsImV4cCI6MjA5NDI1MTc1MX0.1EAJegbje_ZUL7hWD0mYWD-P9R0ZN28UjMnaL7K5Cvc';
 }
