@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import '../core/services/supabase_service.dart';
 
-class AuthScreen extends StatefulWidget {
-  const AuthScreen({super.key});
+class AuthController extends StatefulWidget {
+  const AuthController({super.key});
 
   @override
-  State<AuthScreen> createState() => _AuthScreenState();
+  State<AuthController> createState() => _AuthControllerState();
 }
 
-class _AuthScreenState extends State<AuthScreen> {
+class _AuthControllerState extends State<AuthController> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _usernameController = TextEditingController();
   bool _isLoading = false;
   bool _isLoginMode = true;
 
@@ -19,6 +20,7 @@ class _AuthScreenState extends State<AuthScreen> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _usernameController.dispose();
     super.dispose();
   }
 
@@ -42,6 +44,7 @@ class _AuthScreenState extends State<AuthScreen> {
         await SupabaseService().signUpWithEmail(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
+          username: _usernameController.text.trim(),
         );
       }
 
@@ -89,20 +92,35 @@ class _AuthScreenState extends State<AuthScreen> {
                   key: _formKey,
                   child: Column(
                     children: [
+                      if (!_isLoginMode)
+                        TextFormField(
+                          controller: _usernameController,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: const InputDecoration(
+                            labelText: 'Nome de usuário',
+                            labelStyle: TextStyle(color: Colors.grey),
+                            border: OutlineInputBorder(),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return 'Por favor, insira um nome de usuário.';
+                            }
+                            return null;
+                          },
+                        ),
+                      if (!_isLoginMode) const SizedBox(height: 16),
                       TextFormField(
                         controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
                         style: const TextStyle(color: Colors.white),
                         decoration: const InputDecoration(
-                          labelText: 'E-mail',
+                          labelText: 'Email',
+                          labelStyle: TextStyle(color: Colors.grey),
                           border: OutlineInputBorder(),
                         ),
                         validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'Informe o e-mail';
-                          }
-                          if (!value.contains('@')) {
-                            return 'E-mail inválido';
+                          if (value == null || !value.contains('@')) {
+                            return 'Por favor, insira um email válido.';
                           }
                           return null;
                         },
@@ -114,14 +132,12 @@ class _AuthScreenState extends State<AuthScreen> {
                         style: const TextStyle(color: Colors.white),
                         decoration: const InputDecoration(
                           labelText: 'Senha',
+                          labelStyle: TextStyle(color: Colors.grey),
                           border: OutlineInputBorder(),
                         ),
                         validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'Informe a senha';
-                          }
-                          if (value.trim().length < 6) {
-                            return 'Senha deve ter ao menos 6 caracteres';
+                          if (value == null || value.length < 6) {
+                            return 'A senha deve ter pelo menos 6 caracteres.';
                           }
                           return null;
                         },
@@ -129,16 +145,16 @@ class _AuthScreenState extends State<AuthScreen> {
                       const SizedBox(height: 24),
                       SizedBox(
                         width: double.infinity,
+                        height: 50,
                         child: ElevatedButton(
                           onPressed: _isLoading ? null : _submit,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            child: Text(
-                              _isLoading
-                                  ? 'Aguarde...'
-                                  : (_isLoginMode ? 'Entrar' : 'Registrar'),
-                            ),
-                          ),
+                          child: _isLoading
+                              ? const CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
+                                  ),
+                                )
+                              : Text(_isLoginMode ? 'Entrar' : 'Registrar'),
                         ),
                       ),
                     ],
