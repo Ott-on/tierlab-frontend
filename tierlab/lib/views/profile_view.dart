@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tierlab/core/services/supabase_service.dart';
 import 'package:tierlab/controllers/auth_controller.dart';
+import 'package:tierlab/core/services/supabase_service.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -179,7 +179,10 @@ class _ProfileViewState extends State<ProfileView> {
         children: [
           const Text(
             'Você não está autenticado.',
-            style: TextStyle(fontSize: 18),
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.white,
+            ),
           ),
           const SizedBox(height: 20),
           ElevatedButton(
@@ -193,7 +196,10 @@ class _ProfileViewState extends State<ProfileView> {
                 });
               }
             },
-            child: const Text('Fazer login / registrar'),
+            child: const Text(
+              'Fazer Login / Registrar',
+              style: TextStyle(fontSize: 18),
+            ),
           ),
         ],
       ),
