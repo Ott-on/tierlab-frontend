@@ -38,11 +38,38 @@ class _FormularioTierlistViewState extends State<FormularioTierlistView> {
     super.dispose();
   }
 
-  Future<void> _abrirLogin() async {
-    await Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const AuthController()),
+  Widget _buildLoggedOutView() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            'Você não está autenticado.',
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () async {
+              await Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (_) => const AuthController()));
+              if (_supabaseService.isAuthenticated) {
+                setState(() {
+                  _supabaseService.getProfile(); // Carrega o perfil após o login/registro
+                });
+              }
+            },
+            child: const Text(
+              'Fazer Login / Registrar',
+              style: TextStyle(fontSize: 18),
+            ),
+          ),
+        ],
+      ),
     );
-    if (mounted) setState(() {});
   }
 
   Future<void> _submit() async {
@@ -104,24 +131,13 @@ class _FormularioTierlistViewState extends State<FormularioTierlistView> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Nova TierList')),
-      body: Padding(
+      body: isAuthenticated
+        ? Padding(
         padding: const EdgeInsets.all(20),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              if (!isAuthenticated) ...[
-                const Text(
-                  'Você precisa estar autenticado para criar uma tierlist.',
-                  style: TextStyle(color: Colors.white70),
-                ),
-                const SizedBox(height: 12),
-                ElevatedButton(
-                  onPressed: _isLoading ? null : _abrirLogin,
-                  child: const Text('Fazer Login / Registrar'),
-                ),
-                const SizedBox(height: 24),
-              ],
               Form(
                 key: _formKey,
                 child: Column(
@@ -237,7 +253,8 @@ class _FormularioTierlistViewState extends State<FormularioTierlistView> {
             ],
           ),
         ),
-      ),
+      )
+      : _buildLoggedOutView()
     );
   }
 }

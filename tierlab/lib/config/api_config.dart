@@ -1,4 +1,5 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 class ApiConfig {
-  static const String baseUrl =
-      'https://rework-book-antirust.ngrok-free.dev';
+  static String baseUrl = dotenv.env['API_URL'] ?? '';
 }
