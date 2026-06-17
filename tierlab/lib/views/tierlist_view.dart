@@ -360,41 +360,267 @@ class DetalhesJogoTela extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text(jogoMaster.titulo)),
-    body: Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (jogoMaster.imageUrl.isNotEmpty)
-            Image.network(jogoMaster.imageUrl, height: 200),
-          const SizedBox(height: 16),
-          Text(
-            jogoMaster.titulo,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Status de progresso: ${jogoUsuario.status}',
-            style: const TextStyle(color: Colors.white, fontSize: 16),
-          ),
-          Text(
-            'Nota pessoal: ${jogoUsuario.nota}/5',
-            style: const TextStyle(color: Colors.white, fontSize: 16),
-          ),
-          Text(
-            'Tempo de jogo: ${jogoUsuario.horasJogadas} horas',
-            style: const TextStyle(color: Colors.white, fontSize: 16),
-          ),
-        ],
+  Widget build(BuildContext context) {
+    // Definindo cor e ícone baseados no status de progresso
+    Color statusColor = Colors.blueAccent;
+    IconData statusIcon = Icons.sports_esports_rounded;
+    String statusTexto = jogoUsuario.status.toLowerCase();
+
+    if (statusTexto.contains('jogando') || statusTexto.contains('playing')) {
+      statusColor = Colors.greenAccent[400]!;
+      statusIcon = Icons.play_arrow_rounded;
+    } else if (statusTexto.contains('completado') || statusTexto.contains('concluído') || statusTexto.contains('completed')) {
+      statusColor = Colors.purpleAccent[400]!;
+      statusIcon = Icons.emoji_events_rounded;
+    } else if (statusTexto.contains('dropado') || statusTexto.contains('abandonado') || statusTexto.contains('dropped')) {
+      statusColor = Colors.redAccent[400]!;
+      statusIcon = Icons.close_rounded;
+    } else if (statusTexto.contains('planejo') || statusTexto.contains('backlog') || statusTexto.contains('plan to play')) {
+      statusColor = Colors.amberAccent[400]!;
+      statusIcon = Icons.schedule_rounded;
+    }
+
+    return Scaffold(
+      backgroundColor: const Color(0xFF121212),
+      appBar: AppBar(
+        title: Text(jogoMaster.titulo),
+        elevation: 0,
       ),
-    ),
-  );
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Image Banner with gradient overlay
+            if (jogoMaster.imageUrl.isNotEmpty)
+              Stack(
+                children: [
+                  Image.network(
+                    jogoMaster.imageUrl,
+                    width: double.infinity,
+                    height: 240,
+                    fit: BoxFit.cover,
+                    errorBuilder: (c, e, s) => Container(
+                      width: double.infinity,
+                      height: 240,
+                      color: Colors.grey[800],
+                      child: const Icon(
+                        Icons.image_not_supported,
+                        color: Colors.white30,
+                        size: 64,
+                      ),
+                    ),
+                  ),
+                  Positioned.fill(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Colors.black.withOpacity(0.85),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Game Title
+                  Text(
+                    jogoMaster.titulo,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  
+                  // Metadata cards section
+                  const Text(
+                    'SUAS ESTATÍSTICAS',
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.0,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  
+                  // Progress Status Card
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    margin: const EdgeInsets.only(bottom: 14),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF1E1E1E),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: Colors.grey[800]!.withOpacity(0.5),
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: statusColor.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(statusIcon, color: statusColor, size: 24),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Status de progresso',
+                                style: TextStyle(color: Colors.grey, fontSize: 12),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                jogoUsuario.status,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Score / Rating Card and Time Played Card in a Grid/Row
+                  Row(
+                    children: [
+                      // Rating Card
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1E1E1E),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: Colors.grey[800]!.withOpacity(0.5),
+                              width: 1,
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(Icons.star_rounded, color: Colors.amber[400], size: 20),
+                                  const SizedBox(width: 6),
+                                  const Text(
+                                    'Nota pessoal',
+                                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.baseline,
+                                textBaseline: TextBaseline.alphabetic,
+                                children: [
+                                  Text(
+                                    '${jogoUsuario.nota}',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const Text(
+                                    '/5',
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 14),
+                      // Time Played Card
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1E1E1E),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: Colors.grey[800]!.withOpacity(0.5),
+                              width: 1,
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(Icons.access_time_filled_rounded, color: Colors.blueAccent[100], size: 20),
+                                  const SizedBox(width: 6),
+                                  const Text(
+                                    'Tempo de jogo',
+                                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.baseline,
+                                textBaseline: TextBaseline.alphabetic,
+                                children: [
+                                  Text(
+                                    '${jogoUsuario.horasJogadas}',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  const Text(
+                                    'horas',
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 // ============================================================================
