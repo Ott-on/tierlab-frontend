@@ -45,10 +45,7 @@ class _FormularioTierlistViewState extends State<FormularioTierlistView> {
         children: [
           const Text(
             'Você não está autenticado.',
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.white,
-            ),
+            style: TextStyle(fontSize: 18, color: Colors.white),
           ),
           const SizedBox(height: 20),
           ElevatedButton(
@@ -58,7 +55,8 @@ class _FormularioTierlistViewState extends State<FormularioTierlistView> {
               ).push(MaterialPageRoute(builder: (_) => const AuthController()));
               if (_supabaseService.isAuthenticated) {
                 setState(() {
-                  _supabaseService.getProfile(); // Carrega o perfil após o login/registro
+                  _supabaseService
+                      .getProfile(); // Carrega o perfil após o login/registro
                 });
               }
             },
@@ -75,9 +73,7 @@ class _FormularioTierlistViewState extends State<FormularioTierlistView> {
   Future<void> _submit() async {
     if (!_supabaseService.isAuthenticated) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Faça login para criar uma tierlist.'),
-        ),
+        const SnackBar(content: Text('Faça login para criar uma tierlist.')),
       );
       return;
     }
@@ -89,15 +85,10 @@ class _FormularioTierlistViewState extends State<FormularioTierlistView> {
 
     try {
       final user = _supabaseService.currentUser!;
-      final profile = await _supabaseService.getProfile();
-      final username = profile?['username'] as String? ??
-          user.userMetadata?['username'] as String?;
-
-      await _userApiService.sincronizarUsuario(
-        usuarioId: user.id,
-        email: user.email ?? '',
-        username: username,
-      );
+      // final profile = await _supabaseService.getProfile();
+      // final username = profile?['username'] as String? ??
+      //     user.userMetadata?['username'] as String?;
+      await _userApiService.obterPerfilMe();
 
       final request = CreateTierlistRequest(
         usuarioId: user.id,
@@ -117,9 +108,9 @@ class _FormularioTierlistViewState extends State<FormularioTierlistView> {
       Navigator.of(context).pop(true);
     } catch (error) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Falha: $error')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Falha: $error')));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -132,129 +123,130 @@ class _FormularioTierlistViewState extends State<FormularioTierlistView> {
     return Scaffold(
       appBar: AppBar(title: const Text('Nova TierList')),
       body: isAuthenticated
-        ? Padding(
-        padding: const EdgeInsets.all(20),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Form(
-                key: _formKey,
+          ? Padding(
+              padding: const EdgeInsets.all(20),
+              child: SingleChildScrollView(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    TextFormField(
-                      controller: _tituloController,
-                      enabled: isAuthenticated && !_isLoading,
-                      style: const TextStyle(color: Colors.white),
-                      decoration: const InputDecoration(
-                        labelText: 'Título',
-                        labelStyle: TextStyle(color: Colors.grey),
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Informe o título da tierlist.';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _descricaoController,
-                      enabled: isAuthenticated && !_isLoading,
-                      maxLines: 4,
-                      style: const TextStyle(color: Colors.white),
-                      decoration: const InputDecoration(
-                        labelText: 'Descrição',
-                        labelStyle: TextStyle(color: Colors.grey),
-                        border: OutlineInputBorder(),
-                        alignLabelWithHint: true,
-                      ),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Informe a descrição da tierlist.';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _imageUrlController,
-                      enabled: isAuthenticated && !_isLoading,
-                      keyboardType: TextInputType.url,
-                      style: const TextStyle(color: Colors.white),
-                      decoration: const InputDecoration(
-                        labelText: 'URL da imagem',
-                        labelStyle: TextStyle(color: Colors.grey),
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Informe a URL da imagem.';
-                        }
-                        final uri = Uri.tryParse(value.trim());
-                        if (uri == null ||
-                            !uri.hasScheme ||
-                            !uri.host.isNotEmpty) {
-                          return 'Informe uma URL válida.';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    FormField<String>(
-                      initialValue: _visibilidade,
-                      builder: (field) => DropdownButtonFormField<String>(
-                        initialValue: field.value,
-                        dropdownColor: const Color(0xFF2E2E2E),
-                        style: const TextStyle(color: Colors.white),
-                        decoration: const InputDecoration(
-                          labelText: 'Visibilidade',
-                          labelStyle: TextStyle(color: Colors.grey),
-                          border: OutlineInputBorder(),
-                        ),
-                        items: _visibilidadeOpcoes
-                            .map(
-                              (opcao) => DropdownMenuItem(
-                                value: opcao.$1,
-                                child: Text(opcao.$2),
-                              ),
-                            )
-                            .toList(),
-                        onChanged: isAuthenticated && !_isLoading
-                            ? (value) {
-                                if (value != null) {
-                                  field.didChange(value);
-                                  _visibilidade = value;
-                                }
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            controller: _tituloController,
+                            enabled: isAuthenticated && !_isLoading,
+                            style: const TextStyle(color: Colors.white),
+                            decoration: const InputDecoration(
+                              labelText: 'Título',
+                              labelStyle: TextStyle(color: Colors.grey),
+                              border: OutlineInputBorder(),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return 'Informe o título da tierlist.';
                               }
-                            : null,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed:
-                            isAuthenticated && !_isLoading ? _submit : null,
-                        child: _isLoading
-                            ? const CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.white,
-                                ),
-                              )
-                            : const Text('Criar Tierlist'),
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _descricaoController,
+                            enabled: isAuthenticated && !_isLoading,
+                            maxLines: 4,
+                            style: const TextStyle(color: Colors.white),
+                            decoration: const InputDecoration(
+                              labelText: 'Descrição',
+                              labelStyle: TextStyle(color: Colors.grey),
+                              border: OutlineInputBorder(),
+                              alignLabelWithHint: true,
+                            ),
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return 'Informe a descrição da tierlist.';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _imageUrlController,
+                            enabled: isAuthenticated && !_isLoading,
+                            keyboardType: TextInputType.url,
+                            style: const TextStyle(color: Colors.white),
+                            decoration: const InputDecoration(
+                              labelText: 'URL da imagem',
+                              labelStyle: TextStyle(color: Colors.grey),
+                              border: OutlineInputBorder(),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.trim().isEmpty) {
+                                return 'Informe a URL da imagem.';
+                              }
+                              final uri = Uri.tryParse(value.trim());
+                              if (uri == null ||
+                                  !uri.hasScheme ||
+                                  !uri.host.isNotEmpty) {
+                                return 'Informe uma URL válida.';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          FormField<String>(
+                            initialValue: _visibilidade,
+                            builder: (field) => DropdownButtonFormField<String>(
+                              initialValue: field.value,
+                              dropdownColor: const Color(0xFF2E2E2E),
+                              style: const TextStyle(color: Colors.white),
+                              decoration: const InputDecoration(
+                                labelText: 'Visibilidade',
+                                labelStyle: TextStyle(color: Colors.grey),
+                                border: OutlineInputBorder(),
+                              ),
+                              items: _visibilidadeOpcoes
+                                  .map(
+                                    (opcao) => DropdownMenuItem(
+                                      value: opcao.$1,
+                                      child: Text(opcao.$2),
+                                    ),
+                                  )
+                                  .toList(),
+                              onChanged: isAuthenticated && !_isLoading
+                                  ? (value) {
+                                      if (value != null) {
+                                        field.didChange(value);
+                                        _visibilidade = value;
+                                      }
+                                    }
+                                  : null,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: ElevatedButton(
+                              onPressed: isAuthenticated && !_isLoading
+                                  ? _submit
+                                  : null,
+                              child: _isLoading
+                                  ? const CircularProgressIndicator(
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white,
+                                      ),
+                                    )
+                                  : const Text('Criar Tierlist'),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
               ),
-            ],
-          ),
-        ),
-      )
-      : _buildLoggedOutView()
+            )
+          : _buildLoggedOutView(),
     );
   }
 }
