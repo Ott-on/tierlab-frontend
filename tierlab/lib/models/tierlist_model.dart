@@ -34,9 +34,18 @@ class AddJogoRequest {
   final String tier;
   final String posicao; // Exemplo: "1" para o primeiro jogo da tier
 
-  const AddJogoRequest({required this.jogoId, required this.tier, required this.posicao});
+  const AddJogoRequest({
+    required this.jogoId,
+    required this.tier,
+    required this.posicao,
+  });
 
-  Map<String, dynamic> toJson() => {'jogoId': jogoId, 'tier': tier, 'posicao': posicao};
+  Map<String, dynamic> toJson() => {
+    'jogoId': jogoId,
+    'tier': tier,
+    'status': tier, // Envia tanto 'tier' quanto 'status' para compatibilidade
+    'posicao': posicao,
+  };
 }
 
 // ==========================================
