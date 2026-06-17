@@ -87,7 +87,13 @@ class _ProfileViewState extends State<ProfileView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Perfil')),
+      appBar: AppBar(
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Image.asset('assets/images/logo.png'),
+        ),
+        title: const Text('Perfil'),
+      ),
       body: _supabaseService.isAuthenticated
           ? _buildProfileView()
           : _buildLoggedOutView(),

@@ -62,7 +62,13 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Tierlab')),
+      appBar: AppBar(
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Image.asset('assets/images/logo.png'),
+        ),
+        title: const Text('Tierlab'),
+      ),
       body: Padding(
         padding: const EdgeInsets.only(top: 30),
         child: Column(
@@ -86,13 +92,13 @@ class _HomeViewState extends State<HomeView> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const SizedBox(
                     height: 240,
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
+                    child: Center(child: CircularProgressIndicator()),
                   );
                 }
 
-                if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
+                if (snapshot.hasError ||
+                    !snapshot.hasData ||
+                    snapshot.data!.isEmpty) {
                   return SizedBox(
                     height: 240,
                     child: Center(
@@ -119,7 +125,8 @@ class _HomeViewState extends State<HomeView> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => DetalhesTierlistView(tierlist: tierlist),
+                            builder: (context) =>
+                                DetalhesTierlistView(tierlist: tierlist),
                           ),
                         );
                       },
@@ -140,16 +147,18 @@ class _HomeViewState extends State<HomeView> {
                                         fit: BoxFit.cover,
                                         width: double.infinity,
                                         height: double.infinity,
-                                        errorBuilder: (context, error, stackTrace) => Container(
-                                          color: Colors.grey[800],
-                                          width: double.infinity,
-                                          height: double.infinity,
-                                          child: const Icon(
-                                            Icons.image,
-                                            color: Colors.white30,
-                                            size: 48,
-                                          ),
-                                        ),
+                                        errorBuilder:
+                                            (context, error, stackTrace) =>
+                                                Container(
+                                                  color: Colors.grey[800],
+                                                  width: double.infinity,
+                                                  height: double.infinity,
+                                                  child: const Icon(
+                                                    Icons.image,
+                                                    color: Colors.white30,
+                                                    size: 48,
+                                                  ),
+                                                ),
                                       ),
                                       Container(
                                         decoration: BoxDecoration(
@@ -158,7 +167,12 @@ class _HomeViewState extends State<HomeView> {
                                             end: Alignment.bottomCenter,
                                             colors: [
                                               Colors.transparent,
-                                              const Color.fromRGBO(0, 0, 0, 0.7),
+                                              const Color.fromRGBO(
+                                                0,
+                                                0,
+                                                0,
+                                                0.7,
+                                              ),
                                             ],
                                           ),
                                         ),
@@ -189,7 +203,10 @@ class _HomeViewState extends State<HomeView> {
                               tierlist.descricao,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(color: Colors.grey[400], fontSize: 11),
+                              style: TextStyle(
+                                color: Colors.grey[400],
+                                fontSize: 11,
+                              ),
                             ),
                           ),
                         ],
@@ -211,7 +228,10 @@ class _HomeViewState extends State<HomeView> {
                         value: _selectedGeneroId,
                         isExpanded: true,
                         dropdownColor: const Color(0xFF1E1E1E),
-                        icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
+                        icon: const Icon(
+                          Icons.arrow_drop_down,
+                          color: Colors.white,
+                        ),
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 22,
@@ -275,13 +295,13 @@ class _HomeViewState extends State<HomeView> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const SizedBox(
                     height: 135,
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
+                    child: Center(child: CircularProgressIndicator()),
                   );
                 }
 
-                if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
+                if (snapshot.hasError ||
+                    !snapshot.hasData ||
+                    snapshot.data!.isEmpty) {
                   return SizedBox(
                     height: 135,
                     child: Center(
@@ -311,7 +331,8 @@ class _HomeViewState extends State<HomeView> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => DetalhesTierlistView(tierlist: tierlist),
+                              builder: (context) =>
+                                  DetalhesTierlistView(tierlist: tierlist),
                             ),
                           );
                         },
@@ -339,19 +360,23 @@ class _HomeViewState extends State<HomeView> {
                                   height: 85,
                                   width: double.infinity,
                                   fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) => Container(
-                                    height: 85,
-                                    color: Colors.grey[800],
-                                    child: const Icon(
-                                      Icons.list_alt,
-                                      color: Colors.white30,
-                                      size: 32,
-                                    ),
-                                  ),
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      Container(
+                                        height: 85,
+                                        color: Colors.grey[800],
+                                        child: const Icon(
+                                          Icons.list_alt,
+                                          color: Colors.white30,
+                                          size: 32,
+                                        ),
+                                      ),
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8.0,
+                                  vertical: 6.0,
+                                ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -422,16 +447,16 @@ class VerMaisGenerosTela extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
-      appBar: AppBar(
-        title: Text('Tierlists: $generoNome'),
-      ),
+      appBar: AppBar(title: Text('Tierlists: $generoNome')),
       body: FutureBuilder<List<dynamic>>(
         future: tierlistService.obterPorGenero(generoId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
-          if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
+          if (snapshot.hasError ||
+              !snapshot.hasData ||
+              snapshot.data!.isEmpty) {
             return const Center(
               child: Text(
                 'Nenhuma tierlist encontrada para este gênero.',
@@ -542,7 +567,8 @@ class _TierlistItemCardState extends State<TierlistItemCard> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => DetalhesTierlistView(tierlist: itemExibido),
+                  builder: (context) =>
+                      DetalhesTierlistView(tierlist: itemExibido),
                 ),
               );
             },

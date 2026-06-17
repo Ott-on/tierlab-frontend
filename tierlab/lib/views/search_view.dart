@@ -90,6 +90,10 @@ class _SearchViewState extends State<SearchView> {
     return Scaffold(
       backgroundColor: const Color(0xFF121212),
       appBar: AppBar(
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Image.asset('assets/images/logo.png'),
+        ),
         title: const Text('Buscar Tierlists'),
         backgroundColor: Colors.transparent,
         elevation: 0,

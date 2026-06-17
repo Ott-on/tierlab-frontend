@@ -36,7 +36,13 @@ class TierListsView extends StatelessWidget {
     final user = SupabaseService().currentUser;
     if (user == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Dashboard')),
+        appBar: AppBar(
+          leading: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Image.asset('assets/images/logo.png'),
+          ),
+          title: const Text('Dashboard'),
+        ),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -72,7 +78,13 @@ class TierListsView extends StatelessWidget {
       behavior:
           AppScrollBehavior(), // Aplica a permissão de arraste para todas as listas internas
       child: Scaffold(
-        appBar: AppBar(title: const Text('Dashboard')),
+        appBar: AppBar(
+          leading: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Image.asset('assets/images/logo.png'),
+          ),
+          title: const Text('Dashboard'),
+        ),
         body: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           child: Padding(

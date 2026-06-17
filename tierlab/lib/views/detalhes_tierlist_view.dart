@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import '../core/services/supabase_service.dart';
@@ -5,6 +6,15 @@ import '../core/services/jogos_api_service.dart';
 import '../core/services/tierlist_api_service.dart';
 import '../models/jogos_model.dart';
 import '../models/tierlist_model.dart';
+
+class AppScrollBehavior extends MaterialScrollBehavior {
+  @override
+  Set<PointerDeviceKind> get dragDevices => {
+    PointerDeviceKind.touch,
+    PointerDeviceKind.mouse,
+    PointerDeviceKind.trackpad,
+  };
+}
 
 class DetalhesTierlistView extends StatefulWidget {
   final TierlistModel tierlist;
@@ -328,8 +338,10 @@ class _DetalhesTierlistViewState extends State<DetalhesTierlistView> {
       );
     }
 
-    return Scaffold(
-      backgroundColor: const Color(0xFF121212),
+    return ScrollConfiguration(
+      behavior: AppScrollBehavior(),
+      child: Scaffold(
+        backgroundColor: const Color(0xFF121212),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -660,8 +672,9 @@ class _DetalhesTierlistViewState extends State<DetalhesTierlistView> {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   List<Widget> _buildTiers() {
     return ['S', 'A', 'B', 'C', 'D', 'E', 'F'].map((tier) {
