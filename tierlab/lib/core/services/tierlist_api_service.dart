@@ -100,21 +100,7 @@ class TierlistApiService {
   Future<List<dynamic>> obterJogosDaTierlist(String tierlistId) async {
     final uri = Uri.parse('${ApiConfig.baseUrl}/api/Tierlists/$tierlistId/jogos');
     final response = await http.get(uri, headers: _headers);
-
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      if (response.body.isEmpty) return [];
-
-      final body = jsonDecode(response.body);
-
-      if (body is Map<String, dynamic> && body.containsKey('items')) {
-        return body['items'] as List<dynamic>;
-      }
-
-      if (body is List) {
-        return body;
-      }
-    }
-    return [];
+    return _tratarRespostaLista(response);
   }
 
   // ==========================================
@@ -158,9 +144,13 @@ class TierlistApiService {
       if (body is List) {
         return body;
       }
-      // Caso a API retorne um erro formatado como objeto em uma rota de lista
-      if (body is Map<String, dynamic> && body['title'] == 'Internal Server Error') {
-        throw Exception('A API retornou erro interno.');
+      if (body is Map<String, dynamic>) {
+        if (body.containsKey('items')) {
+          return body['items'] as List<dynamic>;
+        }
+        if (body['title'] == 'Internal Server Error') {
+          throw Exception('A API retornou erro interno.');
+        }
       }
       return [];
     }

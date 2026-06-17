@@ -43,7 +43,6 @@ class AddJogoRequest {
   Map<String, dynamic> toJson() => {
     'jogoId': jogoId,
     'tier': tier,
-    'status': tier, // Envia tanto 'tier' quanto 'status' para compatibilidade
     'posicao': posicao,
   };
 }

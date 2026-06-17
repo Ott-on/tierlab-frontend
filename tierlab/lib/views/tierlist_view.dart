@@ -243,9 +243,20 @@ class TierListsView extends StatelessWidget {
         ),
         TextButton(
           onPressed: onVerMais,
-          child: const Text(
-            'Ver mais',
-            style: TextStyle(color: Colors.blueAccent),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Ver Mais',
+                style: TextStyle(color: Colors.amber[800]),
+              ),
+              const SizedBox(width: 4),
+              Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: Colors.amber[800],
+              ),
+            ],
           ),
         ),
       ],
