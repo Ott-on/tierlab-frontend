@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:tierlab/views/formulario_tierlist_view.dart';
 
 // Importações dos seus Models e Services (Ajuste conforme a estrutura de pastas do seu projeto)
+import '../controllers/auth_controller.dart';
 import '../models/tierlist_model.dart';
 import '../models/user_model.dart';
 import '../models/jogos_model.dart'; // Modelo de jogos criado anteriormente
@@ -24,9 +25,6 @@ class AppScrollBehavior extends MaterialScrollBehavior {
 }
 
 class TierListsView extends StatelessWidget {
-  // ID do usuário para testes - integre com seu sistema de login/autenticação posterior
-  final String usuarioIdLogado = SupabaseService().currentUser!.id;
-
   final TierlistApiService _tierlistService = TierlistApiService();
   final UserApiService _usuarioService = UserApiService();
   final JogosApiService _jogosService = JogosApiService();
@@ -35,6 +33,41 @@ class TierListsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final user = SupabaseService().currentUser;
+    if (user == null) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Dashboard')),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'Você não está autenticado.',
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () async {
+                  await Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const AuthController()),
+                  );
+                },
+                child: const Text(
+                  'Fazer Login / Registrar',
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final String usuarioIdLogado = user.id;
+
     return ScrollConfiguration(
       behavior:
           AppScrollBehavior(), // Aplica a permissão de arraste para todas as listas internas
